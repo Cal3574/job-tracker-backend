@@ -41,13 +41,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
-	if createdUser == (models.User{}) {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"message": "User already exists",
-			"user":    createdUser,
-			
-		})
-	}
+	fmt.Println(createdUser, "created")
+	// if createdUser == (models.User{}) {
+	// 	json.NewEncoder(w).Encode(map[string]interface{}{
+	// 		"message": "User already exists",
+	// 		"user":    createdUser,
+	// 	})
+	// }
 
 	// Respond with the created user data
 	w.WriteHeader(http.StatusCreated)

@@ -18,6 +18,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 
+		fmt.Print(authHeader)
 		if !strings.HasPrefix(authHeader, "Bearer ") {
 
 			w.WriteHeader(http.StatusUnauthorized)
@@ -32,7 +33,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
-            //! This is a secret key that should be stored securely TODO: Move this to a config file    
+			//! This is a secret key that should be stored securely TODO: Move this to a config file
 			return []byte("123123123"), nil
 		})
 

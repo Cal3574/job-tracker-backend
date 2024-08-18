@@ -12,18 +12,17 @@ import (
 )
 
 func main() {
-    // Initialize the database connection
-    utils.InitDB()
+	// Initialize the database connection
+	utils.InitDB()
 
-    // Set up routes
-    router := routes.SetupRoutes()
+	// Set up routes
+	router := routes.SetupRoutes()
 
+	// Start the server
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}), // Replace with your frontend URL
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Authorization ", "Content-Type"}),
+	)(router)))
 
-    // Start the server
-    log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
-        handlers.AllowedOrigins([]string{"*"}), // Replace with your frontend URL
-        handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-        handlers.AllowedHeaders([]string{"Authorization ", "Content-Type"} ),
-    )(router)) )
-    
 }
