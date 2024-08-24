@@ -18,7 +18,6 @@ func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 
-		fmt.Print(authHeader)
 		if !strings.HasPrefix(authHeader, "Bearer ") {
 
 			w.WriteHeader(http.StatusUnauthorized)

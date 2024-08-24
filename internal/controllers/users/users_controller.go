@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	models "job_tracker/internal/models/users"
 	services "job_tracker/internal/services/users"
 	validation "job_tracker/internal/validation/users"
@@ -33,7 +32,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Print the user data for debugging purposes (optional)
-	fmt.Println(user)
 
 	// Create the user
 	createdUser, err := services.CreateNewUser(user.Email, user.Name)
@@ -41,7 +39,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(createdUser, "created")
 	// if createdUser == (models.User{}) {
 	// 	json.NewEncoder(w).Encode(map[string]interface{}{
 	// 		"message": "User already exists",

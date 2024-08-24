@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	models "job_tracker/internal/models/job"
 	repositories "job_tracker/internal/repositories/job"
 )
@@ -17,16 +16,16 @@ func GetJobById(id int) (models.Job, error) {
 }
 
 // Function to create a job
-func CreateJob(title string, location string, company string, salary int, url string, userId int) (models.Job, error) {
+func CreateJob(title string, location string, company string, salary int, url string, userId int, priorities string) (models.Job, error) {
 
 	job := models.Job{
-		JobTitle: title,
-		Location: location,
-		Company:  company,
-		Salary:   salary,
-		URL:      url,
+		JobTitle:   title,
+		Location:   location,
+		Company:    company,
+		Salary:     salary,
+		URL:        url,
+		Priorities: priorities,
 	}
-	fmt.Println("Job: ", job)
 	return repositories.CreateJob(job, userId)
 }
 

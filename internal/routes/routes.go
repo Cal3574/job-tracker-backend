@@ -24,11 +24,14 @@ func SetupRoutes() *mux.Router {
 
 	// Define routes for jobs under the authenticated subrouter
 	authRouter.HandleFunc("/jobs", job_controllers.GetJobs).Methods("GET")
-	authRouter.HandleFunc("/jobs/{id}", job_controllers.GetJobById).Methods("GET")
+	authRouter.HandleFunc("/jobs", job_controllers.GetJobById).Methods("GET")
 	authRouter.HandleFunc("/jobs", job_controllers.CreateJob).Methods("POST")
 	authRouter.HandleFunc("/jobs", job_controllers.DeleteJob).Methods("DELETE")
 	authRouter.HandleFunc("/jobs", job_controllers.UpdateJob).Methods("PUT")
 	authRouter.HandleFunc("/job_logs", job_log_controllers.CreateJobLog).Methods("POST")
+	authRouter.HandleFunc("/job_logs", job_log_controllers.FindJobLogById).Methods("GET")
+	authRouter.HandleFunc("/job_logs", job_log_controllers.DeleteJobLogById).Methods("DELETE")
+	authRouter.HandleFunc("/job_logs", job_log_controllers.UpdateJobLog).Methods("PUT")
 
 	// Define routes for users that do not need authentication
 	router.HandleFunc("/users", user_controllers.CreateUser).Methods("POST")

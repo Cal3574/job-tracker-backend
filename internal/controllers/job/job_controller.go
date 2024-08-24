@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/job"
 	services "job_tracker/internal/services/job"
@@ -21,17 +20,13 @@ func GetJobs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("User ID from context: %d\n", userId)
-
 	// Example: Pass userId to the service layer if needed
 	jobs, err := services.GetAllJobs(userId)
 	if err != nil {
-		log.Printf("Failed to get jobs: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Print(jobs)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(jobs)
 }
@@ -82,7 +77,7 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	newJob, err := services.CreateJob(job.JobTitle, job.Location, job.Company, job.Salary, job.URL, userId)
+	newJob, err := services.CreateJob(job.JobTitle, job.Location, job.Company, job.Salary, job.URL, userId, job.Priorities)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -102,7 +97,6 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 // It deletes the job with the specified ID
 func DeleteJob(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
-	fmt.Print(id, "id123")
 	if id == "" {
 		http.Error(w, "Missing job ID", http.StatusBadRequest)
 		return
@@ -129,21 +123,18 @@ func DeleteJob(w http.ResponseWriter, r *http.Request) {
 //It updates the job with the specified ID
 
 func UpdateJob(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("Update Job")
 	var job models.Job
 	err := json.NewDecoder(r.Body).Decode(&job)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Print(job, "job hre")
 	err = services.UpdateJob(job)
 	if err != nil {
 		log.Printf("Failed to update job: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Print("Job Updated")
 	w.WriteHeader(http.StatusOK)
 }
 
