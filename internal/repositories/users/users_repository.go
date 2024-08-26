@@ -2,37 +2,34 @@ package services
 
 import (
 	"database/sql"
-	"fmt"
 	models "job_tracker/internal/models/users"
 	"job_tracker/pkg/utils"
 )
 
-// Function to create a new user record
-func CreateUser(user models.User) (models.User, error) {
+// Function to create a new user record or return an existing user
+func CreateUser(user models.User) (models.User, bool, error) {
 	// Check if the email already exists in the database
 	existingUser, err := GetUserByEmail(user.Email)
-	fmt.Println(existingUser, "exists")
-
 	if err != nil && err != sql.ErrNoRows {
 		// Return an error if something went wrong other than "no rows found"
-		return user, err
+		return user, false, err
 	}
 
 	if existingUser.Email != "" {
-		// If an existing user is found with the email, return an error
-		return existingUser, nil
+		// If an existing user is found with the email, return the existing user and false
+		return existingUser, false, nil
 	}
 
 	// Insert the new user into the database
 	var id int
 	err = utils.DB.QueryRow("INSERT INTO users (email, name) VALUES ($1, $2) RETURNING id", user.Email, user.Name).Scan(&id)
 	if err != nil {
-		return user, err
+		return user, false, err
 	}
 
 	// Assign the generated ID to the user model
 	user.ID = id
-	return user, nil
+	return user, true, nil // Return the new user and true indicating it's a new user
 }
 
 // Function to get a user by email

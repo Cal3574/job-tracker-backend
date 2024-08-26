@@ -14,4 +14,5 @@ type Job struct {
 	URL          string         `json:"url"`
 	Priorities   string         `json:"priorities"`
 	CategoryName sql.NullString `json:"category_name"`
+	CreatedAt    string         `json:"created_at"`
 }

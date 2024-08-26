@@ -20,8 +20,21 @@ func CreateJobLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Prepare values for insertion
+	var startDate, endDate *string
+	if jobLog.StartDate != nil {
+		startDate = jobLog.StartDate
+	} else {
+		startDate = nil
+	}
+	if jobLog.EndDate != nil {
+		endDate = jobLog.EndDate
+	} else {
+		endDate = nil
+	}
+
 	// Call the service to create the job log
-	newJobLog, err := services.CreateJobLog(jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.EndDate, jobLog.JobId, jobLog.CategoryId)
+	newJobLog, err := services.CreateJobLog(jobLog.Title, jobLog.Completed, jobLog.Note, startDate, endDate, jobLog.JobId, jobLog.CategoryId)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create job log: %v", err), http.StatusInternalServerError)
 		return

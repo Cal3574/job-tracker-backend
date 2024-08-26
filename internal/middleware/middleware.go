@@ -26,6 +26,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		}
 
 		jwtToken := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
+		fmt.Print(jwtToken, "jwt here")
 
 		token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 

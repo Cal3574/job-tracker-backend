@@ -5,21 +5,20 @@ import (
 	repositories "job_tracker/internal/repositories/users"
 )
 
-// CreateNewUser creates a new user record by delegating to the repository layer.
-func CreateNewUser(email string, name string) (models.User, error) {
-
+// CreateNewUser creates a new user record or returns an existing user.
+func CreateNewUser(email string, name string) (models.User, bool, error) {
 	// Create the user model
 	user := models.User{
 		Email: email,
 		Name:  name,
 	}
 
-	// Call the repository layer to create the user
-	createdUser, err := repositories.CreateUser(user)
+	// Call the repository layer to create the user or get the existing one
+	createdUser, isNewUser, err := repositories.CreateUser(user)
 	if err != nil {
 		// Pass the error up to the controller
-		return models.User{}, err
+		return models.User{}, false, err
 	}
 
-	return createdUser, nil
+	return createdUser, isNewUser, nil
 }

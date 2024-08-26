@@ -32,9 +32,11 @@ func SetupRoutes() *mux.Router {
 	authRouter.HandleFunc("/job_logs", job_log_controllers.FindJobLogById).Methods("GET")
 	authRouter.HandleFunc("/job_logs", job_log_controllers.DeleteJobLogById).Methods("DELETE")
 	authRouter.HandleFunc("/job_logs", job_log_controllers.UpdateJobLog).Methods("PUT")
+	
 
 	// Define routes for users that do not need authentication
 	router.HandleFunc("/users", user_controllers.CreateUser).Methods("POST")
+	
 
 	return router
 }

@@ -31,25 +31,27 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Print the user data for debugging purposes (optional)
-
 	// Create the user
-	createdUser, err := services.CreateNewUser(user.Email, user.Name)
+	createdUser, isNewUser, err := services.CreateNewUser(user.Email, user.Name)
 	if err != nil {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
-	// if createdUser == (models.User{}) {
-	// 	json.NewEncoder(w).Encode(map[string]interface{}{
-	// 		"message": "User already exists",
-	// 		"user":    createdUser,
-	// 	})
-	// }
 
-	// Respond with the created user data
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "User created successfully",
-		"user":    createdUser,
-	})
+	// Respond with the appropriate message
+	if isNewUser {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message":  "User created successfully",
+			"user":     createdUser,
+			"new_user": true,
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message":  "User already exists",
+			"user":     createdUser,
+			"new_user": false,
+		})
+	}
 }

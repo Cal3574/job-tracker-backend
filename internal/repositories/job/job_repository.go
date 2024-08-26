@@ -18,7 +18,8 @@ func FindAllJobs(userId int) ([]models.Job, error) {
             j.salary, 
             j.url, 
             j.priorities, 
-            jsc.category_name
+            jsc.category_name,
+			j.created_at
         FROM 
             job j
         LEFT JOIN 
@@ -45,7 +46,7 @@ func FindAllJobs(userId int) ([]models.Job, error) {
 		var job models.Job
 
 		// Use sql.NullString for CategoryName to handle NULL values
-		if err := rows.Scan(&job.ID, &job.JobTitle, &job.Company, &job.Location, &job.Salary, &job.URL, &job.Priorities, &job.CategoryName); err != nil {
+		if err := rows.Scan(&job.ID, &job.JobTitle, &job.Company, &job.Location, &job.Salary, &job.URL, &job.Priorities, &job.CategoryName, &job.CreatedAt); err != nil {
 			return nil, err
 		}
 
