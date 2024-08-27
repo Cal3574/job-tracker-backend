@@ -2,6 +2,7 @@
 package routes
 
 import (
+	industries_controllers "job_tracker/internal/controllers/industries"
 	job_controllers "job_tracker/internal/controllers/job"
 	job_log_controllers "job_tracker/internal/controllers/job_log"
 	user_controllers "job_tracker/internal/controllers/users"
@@ -32,11 +33,12 @@ func SetupRoutes() *mux.Router {
 	authRouter.HandleFunc("/job_logs", job_log_controllers.FindJobLogById).Methods("GET")
 	authRouter.HandleFunc("/job_logs", job_log_controllers.DeleteJobLogById).Methods("DELETE")
 	authRouter.HandleFunc("/job_logs", job_log_controllers.UpdateJobLog).Methods("PUT")
-	
 
 	// Define routes for users that do not need authentication
 	router.HandleFunc("/users", user_controllers.CreateUser).Methods("POST")
-	
+	router.HandleFunc("/users", user_controllers.CompleteSignUp).Methods("PUT")
+	router.HandleFunc("/industries", industries_controllers.GetAllIndustries).Methods("GET")
+	router.HandleFunc("/users/check_signup_status", user_controllers.CheckUserSignUpStatus).Methods("GET")
 
 	return router
 }

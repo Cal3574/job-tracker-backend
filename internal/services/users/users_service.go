@@ -22,3 +22,24 @@ func CreateNewUser(email string, name string) (models.User, bool, error) {
 
 	return createdUser, isNewUser, nil
 }
+
+// CompleteSignUp completes the user sign up process.
+// Adding additional user information to the user record.
+
+func CompleteSignUp(user models.User) error {
+	err := repositories.CompleteSignUp(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CheckUserSignUpStatus checks if the user has completed the sign up process.
+
+func CheckUserSignUpStatus(userId int) (bool, error) {
+	signUpStatus, err := repositories.CheckUserSignUpStatus(userId)
+	if err != nil {
+		return false, err
+	}
+	return signUpStatus, nil
+}
