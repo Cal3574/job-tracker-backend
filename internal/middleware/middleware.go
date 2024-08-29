@@ -26,7 +26,6 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		}
 
 		jwtToken := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
-		fmt.Print(jwtToken, "jwt here")
 
 		token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 
@@ -38,7 +37,6 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			fmt.Printf("Error parsing token: %v\n", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Invalid Token"))
 			return

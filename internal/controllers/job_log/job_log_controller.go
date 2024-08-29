@@ -21,20 +21,25 @@ func CreateJobLog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare values for insertion
-	var startDate, endDate *string
+	var startDate, interview_date, interview_time *string
 	if jobLog.StartDate != nil {
 		startDate = jobLog.StartDate
 	} else {
 		startDate = nil
 	}
-	if jobLog.EndDate != nil {
-		endDate = jobLog.EndDate
+	if jobLog.InterviewDate != nil {
+		interview_date = jobLog.InterviewDate
 	} else {
-		endDate = nil
+		interview_date = nil
+	}
+	if jobLog.InterviewTime != nil {
+		interview_time = jobLog.InterviewTime
+	} else {
+		interview_time = nil
 	}
 
 	// Call the service to create the job log
-	newJobLog, err := services.CreateJobLog(jobLog.Title, jobLog.Completed, jobLog.Note, startDate, endDate, jobLog.JobId, jobLog.CategoryId)
+	newJobLog, err := services.CreateJobLog(jobLog.Title, jobLog.Completed, jobLog.Note, startDate, interview_date, jobLog.JobId, jobLog.CategoryId, interview_time)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create job log: %v", err), http.StatusInternalServerError)
 		return
@@ -131,7 +136,8 @@ func UpdateJobLog(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Completed: %v\n", jobLog.Completed)
 	fmt.Printf("Note: %s\n", jobLog.Note)
 	fmt.Printf("Start Date: %s\n", jobLog.StartDate)
-	fmt.Printf("End Date: %s\n", jobLog.EndDate)
+	fmt.Printf("End Date: %s\n", *jobLog.InterviewTime)
+	fmt.Printf("Interview Date: %s\n", jobLog.InterviewDate)
 	fmt.Printf("Job ID: %d\n", jobLog.JobId)
 	fmt.Printf("Category ID: %d\n", jobLog.CategoryId)
 	fmt.Print("\n")

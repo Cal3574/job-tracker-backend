@@ -3,6 +3,7 @@
 package main
 
 import (
+	"job_tracker/internal/cron"
 	"job_tracker/internal/routes"
 	"job_tracker/pkg/utils"
 	"log"
@@ -14,6 +15,9 @@ import (
 func main() {
 	// Initialize the database connection
 	utils.InitDB()
+
+	// Start the CRON jobs
+	cron.StartCronJobs()
 
 	// Set up routes
 	router := routes.SetupRoutes()

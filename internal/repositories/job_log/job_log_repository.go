@@ -15,7 +15,7 @@ func CreateJobLog(jobLog models.JobLog) (models.JobLog, error) {
 	var id int
 	categoryId, _ := strconv.Atoi(jobLog.CategoryId)
 
-	err := utils.DB.QueryRow("INSERT INTO job_log (title, complete, note, start_date, end_date, category_id, job_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id", jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.EndDate, categoryId, jobLog.JobId).Scan(&id)
+	err := utils.DB.QueryRow("INSERT INTO job_log (title, complete, note, start_date, interview_date, category_id, job_id, interview_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.InterviewDate, categoryId, jobLog.JobId, jobLog.InterviewTime).Scan(&id)
 	if err != nil {
 		log.Println(err)
 		return jobLog, err
@@ -29,7 +29,7 @@ func CreateJobLog(jobLog models.JobLog) (models.JobLog, error) {
 
 // Function to find job log records by job ID
 func FindJobLogById(jobId int) ([]models.JobLog, error) {
-	rows, err := utils.DB.Query("SELECT id, title, complete, note, start_date, end_date, category_id, job_id FROM job_log WHERE job_id = $1", jobId)
+	rows, err := utils.DB.Query("SELECT id, title, complete, note, start_date, interview_date, category_id, job_id, created_at, interview_time FROM job_log WHERE job_id = $1", jobId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func FindJobLogById(jobId int) ([]models.JobLog, error) {
 	var jobLogs []models.JobLog
 	for rows.Next() {
 		var jobLog models.JobLog
-		if err := rows.Scan(&jobLog.ID, &jobLog.Title, &jobLog.Completed, &jobLog.Note, &jobLog.StartDate, &jobLog.EndDate, &jobLog.CategoryId, &jobLog.JobId); err != nil {
+		if err := rows.Scan(&jobLog.ID, &jobLog.Title, &jobLog.Completed, &jobLog.Note, &jobLog.StartDate, &jobLog.InterviewDate, &jobLog.CategoryId, &jobLog.JobId, &jobLog.CreatedAt, &jobLog.InterviewTime); err != nil {
 			return nil, err
 		}
 		jobLogs = append(jobLogs, jobLog)
@@ -78,11 +78,11 @@ func UpdateJobLog(jobLog models.JobLog) (models.JobLog, error) {
 	fmt.Print(jobLog.ID, "jobLog here!")
 
 	// Execute SQL query and debug print
-	query := "UPDATE job_log SET title = $1, complete = $2, note = $3, start_date = $4, end_date = $5, category_id = $6, job_id = $7 WHERE id = $8"
+	query := "UPDATE job_log SET title = $1, complete = $2, note = $3, start_date = $4, interview_date = $5, category_id = $6, job_id = $7, interview_time = $8 WHERE id = $9"
 	fmt.Println("Executing SQL Query:", query)
-	fmt.Println("With Values:", jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.EndDate, categoryId, jobLog.JobId, jobLog.ID)
+	fmt.Println("With Values:", jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.InterviewDate, categoryId, jobLog.JobId, jobLog.ID, jobLog.InterviewTime)
 
-	result, err := utils.DB.Exec(query, jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.EndDate, categoryId, jobLog.JobId, jobLog.ID)
+	result, err := utils.DB.Exec(query, jobLog.Title, jobLog.Completed, jobLog.Note, jobLog.StartDate, jobLog.InterviewDate, categoryId, jobLog.JobId, jobLog.InterviewTime, jobLog.ID)
 	if err != nil {
 		fmt.Println("Error executing query:", err)
 		return jobLog, err
