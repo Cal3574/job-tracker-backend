@@ -19,6 +19,7 @@ type UpcomingInterview struct {
 	UserFirstName string       `json:"user_first_name"`
 	InterviewDate sql.NullTime `json:"interview_date"` // Nullable date
 	InterviewTime sql.NullTime `json:"interview_time"` // Nullable time
+	JobLogID      int          `json:"job_log_id"`
 }
 
 type InterviewReminder struct {

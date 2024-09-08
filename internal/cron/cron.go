@@ -28,7 +28,6 @@ func StartCronJobs() {
 		if err != nil {
 			log.Fatalf("Error getting upcoming interviews: %v", err)
 		}
-		fmt.Println("Upcoming interviews: ", upcomingInterviews)
 	})
 
 	if err != nil {

@@ -22,7 +22,8 @@ func GetUpcomingInterviews() ([]models.UpcomingInterview, error) {
             u.email AS user_email,
 			u.first_name AS user_first_name,
             jl.interview_date,
-            jl.interview_time
+            jl.interview_time,
+			jl.id AS job_log_id
         FROM 
             job_log AS jl
         JOIN 
@@ -35,7 +36,9 @@ func GetUpcomingInterviews() ([]models.UpcomingInterview, error) {
             j.user_id = u.id
         WHERE 
             jl.category_id = 5
-        AND 
+			AND
+			(jl.interview_reminder = false OR jl.interview_reminder IS NULL)        
+			AND 
             (jl.interview_date + jl.interview_time::time) 
             BETWEEN NOW() AND (NOW() + INTERVAL '24 hours');
     `
@@ -67,6 +70,7 @@ func GetUpcomingInterviews() ([]models.UpcomingInterview, error) {
 			&jobs_with_interviews.UserFirstName,
 			&jobs_with_interviews.InterviewDate,
 			&jobs_with_interviews.InterviewTime,
+			&jobs_with_interviews.JobLogID,
 		)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)

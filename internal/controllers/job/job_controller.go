@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/job"
+	goal_services "job_tracker/internal/services/goals"
 	services "job_tracker/internal/services/job"
+
 	"log"
 	"net/http"
 	"strconv"
@@ -77,11 +79,21 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	//handle where priroties is null
 	newJob, err := services.CreateJob(job.JobTitle, job.Location, job.Company, job.Salary, job.URL, userId, job.Priorities)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Handle goal checking.
+	// Check if the user has any goals for job applications.
+	// If they do, check if the job application meets the goal criteria and progress goals if necessary.
+
+	err = goal_services.HandleUserGoals(userId, "job_applications")
+	if err != nil {
+		log.Printf("Error handling user goals: %v", err)
 	}
 
 	if err := json.NewEncoder(w).Encode(newJob); err != nil {

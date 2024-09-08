@@ -26,16 +26,38 @@ func SendEmail(to, name, subject, body string) error {
 			Subject:  subject,
 			TextPart: body,
 			HTMLPart: fmt.Sprintf(
-				`<h3>Dear %s. You have an upcoming interview tomorrow!</a>!</h3><br /> %s`,
-				name, body,
+				`<html>
+					<head>
+						<style>
+							body { font-family: Arial, sans-serif; color: #333; }
+							.container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+							h3 { color: #007bff; }
+							p { line-height: 1.6; }
+							.footer { margin-top: 20px; font-size: 0.8em; color: #888; }
+						</style>
+					</head>
+					<body>
+						<div class="container">
+							<h3>Dear %s,</h3>
+							<p>I hope you are feeling prepared!</p>
+							<p>%s</p>
+							<p>Best of luck.</p>
+							<div class="footer">
+								<p>Thank you for using JobTrackr.</p>
+								<p>Regards,<br />The JobTrackr Team</p>
+							</div>
+						</div>
+					</body>
+				</html>`, name, body,
 			),
 		},
 	}
 	messages := mailjet.MessagesV31{Info: messagesInfo}
 	res, err := mailjetClient.SendMailV31(&messages)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error sending email: %v", err)
+		return err
 	}
-	fmt.Printf("Data: %+v\n", res)
+	log.Printf("Email sent successfully: %+v", res)
 	return nil
 }

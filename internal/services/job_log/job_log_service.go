@@ -1,7 +1,6 @@
 package joblog
 
 import (
-	"fmt"
 	"job_tracker/internal/models/job_log"
 	repositories "job_tracker/internal/repositories/job_log"
 )
@@ -9,7 +8,6 @@ import (
 // Function to Create a new job log record
 func CreateJobLog(title string, completed bool, note string, start_date *string, interview_date *string, jobId int, categoryId string, interview_time *string) (job_log.JobLog, error) {
 
-	fmt.Println(title, completed, note, start_date, interview_date, jobId, categoryId)
 	jobLog := job_log.JobLog{
 		Title:         title,
 		Completed:     completed,

@@ -10,14 +10,14 @@ import (
 )
 
 func main() {
-    // Initialize the database connection
-    utils.InitDB()
+	// Initialize the database connection
+	utils.InitDB()
 
-    // Check if the database is connected
-    err := utils.DB.Ping()
-    if err != nil {
-        log.Fatalf("Error connecting to the database: %v", err)
-    }
+	// Check if the database is connected
+	err := utils.DB.Ping()
+	if err != nil {
+		log.Fatalf("Error connecting to the database: %v", err)
+	}
 
-    fmt.Println("Successfully connected to the database!")
+	fmt.Println("Successfully connected to the database!")
 }
