@@ -16,3 +16,29 @@ type User struct {
 	DesiredIndustryId string `json:"desired_job_industry_id"`
 	SignupComplete    bool   `json:"signup_complete"`
 }
+
+type UserInfo struct {
+	ID                 string `json:"id"`
+	FirstName          string `json:"first_name"`
+	LastName           string `json:"last_name"`
+	Email              string `json:"email"`
+	CurrentJobRole     string `json:"job_role"`
+	ExperienceLevel    string `json:"experience_level"`
+	DesiredJobRole     string `json:"desired_job_role"`
+	DesiredJobIndustry string `json:"desired_job_industry"`
+}
+
+type UserPersonalInfo struct {
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+}
+
+type UserCareerInfo struct {
+	ID                string `json:"id"`
+	CurrentJobRole    string `json:"job_role"`
+	ExperienceLevel   string `json:"experience_level"`
+	DesiredJobRole    string `json:"desired_job_role"`
+	DesiredIndustryId string `json:"desired_job_industry_id"`
+}

@@ -113,5 +113,4 @@ func UpdateJob(job models.Job) error {
 		fmt.Println("Rows affected:", rowsAffected)
 	}
 	return nil
-
 }

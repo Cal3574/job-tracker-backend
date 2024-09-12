@@ -9,16 +9,20 @@ import (
 	"time"
 )
 
-//Function to create a new goal
-
+// Function to create a new goal
 func CreateGoal(userId int, goalName string, goalDescription string, goalAction string, goalDeadline string, goalTarget int8, goalType string) (int, error) {
 	return repositories.CreateGoal(userId, goalName, goalDescription, goalAction, goalDeadline, goalTarget, goalType)
 }
 
-//Function to get all goals
-
+// Function to get all goals
 func GetAllGoals(userId int) ([]models.Goal, error) {
 	return repositories.GetAllGoals(userId)
+}
+
+// Function to delete a specific goal by goalId
+func DeleteGoal(goalId int) error {
+	return repositories.DeleteGoal(goalId)
+
 }
 
 // Function to progress goals
@@ -48,7 +52,6 @@ func ProgressGoal(goalId int) error {
 }
 
 // Function to check if user has active goals and progress if necessary
-
 func HandleUserGoals(userId int, goalType string) error {
 	fmt.Println(userId, "user id here")
 	// Retrieve all goals for the user

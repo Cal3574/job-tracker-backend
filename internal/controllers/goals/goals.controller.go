@@ -9,6 +9,7 @@ import (
 	"job_tracker/internal/shared"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // CreateGoal handles POST requests to the /goals endpoint
@@ -43,8 +44,33 @@ func CreateGoal(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-// GetAllGoals handles GET requests to the /goals endpoint
+// DeleteGoal handles the DELETE requests to the /goal endpoint
 
+func DeleteGoal(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	if id == "" {
+		http.Error(w, "Missing goal ID", http.StatusBadRequest)
+		return
+	}
+
+	idAsInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		http.Error(w, "Invalid goal ID", http.StatusBadRequest)
+	}
+
+	err = services.DeleteGoal(idAsInt)
+
+	if err != nil {
+		log.Printf("Failed to delete goal: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// GetAllGoals handles GET requests to the /goals endpoint
 func GetAllGoals(w http.ResponseWriter, r *http.Request) {
 
 	userId, ok := r.Context().Value(middleware.UserIDKey).(int)

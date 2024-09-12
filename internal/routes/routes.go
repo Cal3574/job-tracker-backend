@@ -38,6 +38,10 @@ func SetupRoutes() *mux.Router {
 	authRouter.HandleFunc("/analytics/application_count", analytics_controllers.GetApplicationCount).Methods("GET")
 	authRouter.HandleFunc("/goals", goal_controllers.CreateGoal).Methods("POST")
 	authRouter.HandleFunc("/goals", goal_controllers.GetAllGoals).Methods("GET")
+	authRouter.HandleFunc("/goals", goal_controllers.DeleteGoal).Methods("DELETE")
+	authRouter.HandleFunc("/users/user_data", user_controllers.GetUserInformation).Methods("GET")
+	authRouter.HandleFunc("/users/user_data/personal", user_controllers.UpdateUserPersonalDetails).Methods("PUT")
+	authRouter.HandleFunc("/users/user_data/career", user_controllers.UpdateUserPersonalDetails).Methods("UPDATE")
 
 	// Define routes for users that do not need authentication
 	router.HandleFunc("/users", user_controllers.CreateUser).Methods("POST")
@@ -47,6 +51,5 @@ func SetupRoutes() *mux.Router {
 
 	//SHOULD THIS BE AUTH ROUTE OR NOT?
 	router.HandleFunc("/goals/completion", goal_controllers.SendGoalCompletion).Methods("GET")
-
 	return router
 }

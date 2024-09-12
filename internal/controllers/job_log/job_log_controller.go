@@ -3,8 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/job_log"
+	goal_services "job_tracker/internal/services/goals"
 	services "job_tracker/internal/services/job_log"
+
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -12,6 +16,12 @@ import (
 // CreateJobLog handles POST requests to the /job_logs endpoint
 // It creates a new job log record
 func CreateJobLog(w http.ResponseWriter, r *http.Request) {
+
+	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
+	if !ok {
+		http.Error(w, "User ID not found", http.StatusUnauthorized)
+		return
+	}
 	var jobLog models.JobLog
 
 	// Decode JSON request body into jobLog
@@ -43,6 +53,17 @@ func CreateJobLog(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create job log: %v", err), http.StatusInternalServerError)
 		return
+	}
+
+	// Handle goal checking.
+	// Check if the user has any goals for job applications.
+	// If they do, check if the job application meets the goal criteria and progress goals if necessary.
+
+	if jobLog.CategoryId == "5" {
+		err = goal_services.HandleUserGoals(userId, "interviews_confirmed")
+		if err != nil {
+			log.Printf("Error handling user goals: %v", err)
+		}
 	}
 
 	// Respond with the newly created job log

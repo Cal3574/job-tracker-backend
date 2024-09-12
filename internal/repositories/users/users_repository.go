@@ -109,3 +109,73 @@ func CheckUserSignUpStatus(userId int) (bool, error) {
 
 	return signupComplete, nil
 }
+
+// Function to get the users personal information
+func GetUserInformation(userId int) (models.UserInfo, error) {
+	var user_info models.UserInfo
+	fmt.Println(userId, "userId here")
+	err := utils.DB.QueryRow("SELECT users.id, users.first_name, users.last_name, users.email, users.current_job_role, users.desired_job_role, users.experience_level, industries.name FROM users JOIN industries ON users.desired_job_industry_id = industries.id WHERE users.id=$1", userId).Scan(
+		&user_info.ID,
+		&user_info.FirstName,
+		&user_info.LastName,
+		&user_info.Email,
+		&user_info.CurrentJobRole,
+		&user_info.DesiredJobRole,
+		&user_info.ExperienceLevel,
+		&user_info.DesiredJobIndustry,
+	)
+
+	fmt.Println(user_info, "user here")
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("Printing line 122, no rows found")
+			return models.UserInfo{}, nil
+		}
+		// For other errors, return the error
+		fmt.Println(err, "err here in getuserinformaiton")
+		fmt.Println("Printing line 127, error")
+
+		return user_info, err
+	}
+	fmt.Println("Printing line 130, user found")
+
+	return user_info, nil
+}
+
+// Func to update user personal details
+func UpdateUserPersonalDetails(user_personal_info models.UserPersonalInfo) error {
+	result, err := utils.DB.Exec("UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4", user_personal_info.FirstName, user_personal_info.LastName, user_personal_info.Email, user_personal_info.ID)
+
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		fmt.Println("Error fetching rows affected:", err)
+
+	} else {
+		fmt.Println("Rows affected:", rowsAffected)
+
+	}
+	return nil
+}
+
+// Func to update user career details
+func UpdateUserCareerDetails(user_personal_info models.UserCareerInfo) error {
+	result, err := utils.DB.Exec("UPDATE users SET job_role = $1, experience_level = $2, desired_job_role = $3, desired_job_industry_id = $4 WHERE id = $5", user_personal_info.CurrentJobRole, user_personal_info.ExperienceLevel, user_personal_info.DesiredJobRole, user_personal_info.DesiredIndustryId, user_personal_info.ID)
+
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		fmt.Println("Error fetching rows affected:", err)
+
+	} else {
+		fmt.Println("Rows affected:", rowsAffected)
+
+	}
+	return nil
+}

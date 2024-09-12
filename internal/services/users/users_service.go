@@ -25,7 +25,6 @@ func CreateNewUser(email string, name string) (models.User, bool, error) {
 
 // CompleteSignUp completes the user sign up process.
 // Adding additional user information to the user record.
-
 func CompleteSignUp(user models.User) error {
 	err := repositories.CompleteSignUp(user)
 	if err != nil {
@@ -35,11 +34,29 @@ func CompleteSignUp(user models.User) error {
 }
 
 // CheckUserSignUpStatus checks if the user has completed the sign up process.
-
 func CheckUserSignUpStatus(userId int) (bool, error) {
 	signUpStatus, err := repositories.CheckUserSignUpStatus(userId)
 	if err != nil {
 		return false, err
 	}
 	return signUpStatus, nil
+}
+
+// GetUserInformation to grab all the user information for profile page
+func GetUserInformation(userId int) (models.UserInfo, error) {
+	userInfo, err := repositories.GetUserInformation(userId)
+	if err != nil {
+		return userInfo, err
+	}
+	return userInfo, nil
+}
+
+// Update user personal information firstname, lastname, email
+func UpdateUserPersonalDetails(user_personal_info models.UserPersonalInfo) error {
+	return repositories.UpdateUserPersonalDetails(user_personal_info)
+}
+
+// Update user career information job_role, experience_level, desired_job_role, desired_job_industry_id
+func UpdateUserCareerDetails(user_personal_info models.UserCareerInfo) error {
+	return repositories.UpdateUserCareerDetails(user_personal_info)
 }
