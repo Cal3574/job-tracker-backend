@@ -37,7 +37,7 @@ type UserPersonalInfo struct {
 
 type UserCareerInfo struct {
 	ID                string `json:"id"`
-	CurrentJobRole    string `json:"job_role"`
+	CurrentJobRole    string `json:"current_job_role"`
 	ExperienceLevel   string `json:"experience_level"`
 	DesiredJobRole    string `json:"desired_job_role"`
 	DesiredIndustryId string `json:"desired_job_industry_id"`

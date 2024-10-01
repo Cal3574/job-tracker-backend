@@ -163,7 +163,7 @@ func UpdateUserPersonalDetails(user_personal_info models.UserPersonalInfo) error
 
 // Func to update user career details
 func UpdateUserCareerDetails(user_personal_info models.UserCareerInfo) error {
-	result, err := utils.DB.Exec("UPDATE users SET job_role = $1, experience_level = $2, desired_job_role = $3, desired_job_industry_id = $4 WHERE id = $5", user_personal_info.CurrentJobRole, user_personal_info.ExperienceLevel, user_personal_info.DesiredJobRole, user_personal_info.DesiredIndustryId, user_personal_info.ID)
+	result, err := utils.DB.Exec("UPDATE users SET current_job_role = $1, experience_level = $2, desired_job_role = $3, desired_job_industry_id = $4 WHERE id = $5", user_personal_info.CurrentJobRole, user_personal_info.ExperienceLevel, user_personal_info.DesiredJobRole, user_personal_info.DesiredIndustryId, user_personal_info.ID)
 
 	if err != nil {
 		return err

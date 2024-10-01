@@ -41,7 +41,7 @@ func SetupRoutes() *mux.Router {
 	authRouter.HandleFunc("/goals", goal_controllers.DeleteGoal).Methods("DELETE")
 	authRouter.HandleFunc("/users/user_data", user_controllers.GetUserInformation).Methods("GET")
 	authRouter.HandleFunc("/users/user_data/personal", user_controllers.UpdateUserPersonalDetails).Methods("PUT")
-	authRouter.HandleFunc("/users/user_data/career", user_controllers.UpdateUserPersonalDetails).Methods("UPDATE")
+	authRouter.HandleFunc("/users/user_data/career", user_controllers.UpdateUserCareerDetails).Methods("PUT")
 
 	// Define routes for users that do not need authentication
 	router.HandleFunc("/users", user_controllers.CreateUser).Methods("POST")
