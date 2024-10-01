@@ -28,7 +28,7 @@ jobs:
     # Step 4: Build and push the Docker image to Docker Hub
     - name: Build and Push Docker image
       run: |
-        docker build --platform linux/amd64 -t cal3574/job_tracker_backend_v1:latest ./job-tracker-backend_v1
+        docker build --platform linux/amd64 -t cal3574/job_tracker_backend_v1:latest .
         docker push cal3574/job_tracker_backend_v1:latest
 
     # Step 5: Install Railway CLI
