@@ -27,8 +27,6 @@ WORKDIR /app
 # Copy the built binary from the previous build stage
 COPY --from=builder /app/app .
 
-# Copy the .env file (optional, can also be passed directly via Railway)
-COPY .env .
 
 # Expose the port the Go API listens on
 EXPOSE 8080
