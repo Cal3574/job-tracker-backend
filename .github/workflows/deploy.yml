@@ -40,4 +40,4 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}  # Pass Railway token via environment
       run: |
-        railway up --service job_tracker_backend
+        railway up --service job-tracker-backend
