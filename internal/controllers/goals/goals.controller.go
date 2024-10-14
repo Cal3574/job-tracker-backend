@@ -3,7 +3,6 @@ package goals
 import (
 	"encoding/json"
 	"fmt"
-	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/goals"
 	services "job_tracker/internal/services/goals"
 	"job_tracker/internal/shared"
@@ -16,10 +15,9 @@ import (
 // It creates a new goal
 func CreateGoal(w http.ResponseWriter, r *http.Request) {
 
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
 
 	var goal models.Goal
@@ -28,7 +26,7 @@ func CreateGoal(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	newJob, err := services.CreateGoal(userId, goal.GoalName, goal.GoalDescription, goal.GoalAction, goal.GoalDeadline, goal.GoalTarget, goal.GoalType)
+	newJob, err := services.CreateGoal(user_id, goal.GoalName, goal.GoalDescription, goal.GoalAction, goal.GoalDeadline, goal.GoalTarget, goal.GoalType)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -73,13 +71,12 @@ func DeleteGoal(w http.ResponseWriter, r *http.Request) {
 // GetAllGoals handles GET requests to the /goals endpoint
 func GetAllGoals(w http.ResponseWriter, r *http.Request) {
 
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
 
-	goals, err := services.GetAllGoals(userId)
+	goals, err := services.GetAllGoals(user_id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

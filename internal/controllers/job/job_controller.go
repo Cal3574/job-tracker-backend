@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/job"
 	goal_services "job_tracker/internal/services/goals"
 	services "job_tracker/internal/services/job"
@@ -15,15 +14,12 @@ import (
 // GetJobs handles GET requests to the /jobs endpoint
 // It returns a list of all jobs
 func GetJobs(w http.ResponseWriter, r *http.Request) {
-	// Retrieve userId from the context
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
 
-	// Example: Pass userId to the service layer if needed
-	jobs, err := services.GetAllJobs(userId)
+	jobs, err := services.GetAllJobs(user_id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,7 +34,6 @@ func GetJobs(w http.ResponseWriter, r *http.Request) {
 //It returns the job with the specified ID
 
 func GetJobById(w http.ResponseWriter, r *http.Request) {
-
 	idStr := r.URL.Path[len("/jobs/"):]
 
 	if idStr == "" {
@@ -67,10 +62,9 @@ func GetJobById(w http.ResponseWriter, r *http.Request) {
 // It creates a new job
 func CreateJob(w http.ResponseWriter, r *http.Request) {
 
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
 
 	var job models.Job
@@ -80,7 +74,7 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//handle where priroties is null
-	newJob, err := services.CreateJob(job.JobTitle, job.Location, job.Company, job.Salary, job.URL, userId, job.Priorities)
+	newJob, err := services.CreateJob(job.JobTitle, job.Location, job.Company, job.Salary, job.URL, user_id, job.Priorities)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -91,7 +85,7 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 	// Check if the user has any goals for job applications.
 	// If they do, check if the job application meets the goal criteria and progress goals if necessary.
 
-	err = goal_services.HandleUserGoals(userId, "job_applications")
+	err = goal_services.HandleUserGoals(user_id, "job_applications")
 	if err != nil {
 		log.Printf("Error handling user goals: %v", err)
 	}

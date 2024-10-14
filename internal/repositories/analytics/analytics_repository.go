@@ -6,7 +6,7 @@ import (
 )
 
 // GetJobApplicationsCount retrieves job titles from the job table for a specific user within a given date range.
-func GetJobApplicationsCount(userId int, startDate, endDate time.Time) ([]string, error) {
+func GetJobApplicationsCount(userId string, startDate, endDate time.Time) ([]string, error) {
 	query := `
         SELECT job_title
         FROM job

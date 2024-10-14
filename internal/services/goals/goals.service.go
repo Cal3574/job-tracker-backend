@@ -10,12 +10,12 @@ import (
 )
 
 // Function to create a new goal
-func CreateGoal(userId int, goalName string, goalDescription string, goalAction string, goalDeadline string, goalTarget int8, goalType string) (int, error) {
+func CreateGoal(userId string, goalName string, goalDescription string, goalAction string, goalDeadline string, goalTarget int8, goalType string) (int, error) {
 	return repositories.CreateGoal(userId, goalName, goalDescription, goalAction, goalDeadline, goalTarget, goalType)
 }
 
 // Function to get all goals
-func GetAllGoals(userId int) ([]models.Goal, error) {
+func GetAllGoals(userId string) ([]models.Goal, error) {
 	return repositories.GetAllGoals(userId)
 }
 
@@ -52,7 +52,7 @@ func ProgressGoal(goalId int) error {
 }
 
 // Function to check if user has active goals and progress if necessary
-func HandleUserGoals(userId int, goalType string) error {
+func HandleUserGoals(userId string, goalType string) error {
 	fmt.Println(userId, "user id here")
 	// Retrieve all goals for the user
 	goals, err := repositories.GetGoalsByType(userId, goalType)

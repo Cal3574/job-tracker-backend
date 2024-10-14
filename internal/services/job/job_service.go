@@ -6,7 +6,7 @@ import (
 )
 
 // Function to find all jobs
-func GetAllJobs(userId int) ([]models.Job, error) {
+func GetAllJobs(userId string) ([]models.Job, error) {
 	return repositories.FindAllJobs(userId)
 }
 
@@ -16,7 +16,7 @@ func GetJobById(id int) (models.Job, error) {
 }
 
 // Function to create a job
-func CreateJob(title string, location string, company string, salary int, url string, userId int, priorities string) (models.Job, error) {
+func CreateJob(title string, location string, company string, salary int, url string, userId string, priorities string) (models.Job, error) {
 
 	job := models.Job{
 		JobTitle:   title,

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -33,7 +32,7 @@ func JWTMiddleware(next http.Handler) http.Handler {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 			//! This is a secret key that should be stored securely TODO: Move this to a config file
-			return []byte("123123123"), nil
+			return []byte("k9q4HkSxA0opoDv7HoOvlY+DndJDMo1uHSrhFTLx7Wxxi704PouxD/YOz98HRd1W4DoU87PyGqw1aLn/8HUFBQ=="), nil
 		})
 
 		if err != nil {
@@ -49,27 +48,17 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract claims from the token
-		claims, ok := token.Claims.(jwt.MapClaims)
+		// // Extract userId from claims
+		// userId, ok := claims["userId"].(float64)
+		// if !ok {
+		// 	w.WriteHeader(http.StatusUnauthorized)
+		// 	w.Write([]byte("User ID not found in token"))
+		// 	return
+		// }
 
-		if !ok {
-
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Invalid Token Claims"))
-			return
-		}
-
-		// Extract userId from claims
-		userId, ok := claims["userId"].(float64)
-		if !ok {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("User ID not found in token"))
-			return
-		}
-
-		// Store the userId in the context
-		ctx := context.WithValue(r.Context(), UserIDKey, int(userId))
+		// // Store the userId in the context
+		// ctx := context.WithValue(r.Context(), UserIDKey, int(userId))
 		// Proceed to the next handler with the new context
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r.WithContext(r.Context()))
 	})
 }

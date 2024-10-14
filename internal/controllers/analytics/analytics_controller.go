@@ -3,7 +3,6 @@ package industries
 import (
 	"encoding/json"
 	"fmt"
-	"job_tracker/internal/middleware"
 	services "job_tracker/internal/services/analytics"
 	"job_tracker/pkg/utils"
 	"net/http"
@@ -13,10 +12,9 @@ import (
 // GetApplicationCount handles GET requests to the /industries endpoint
 // It returns a list of job titles for the last {days} days and the percentage change compared to the previous period
 func GetApplicationCount(w http.ResponseWriter, r *http.Request) {
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
 
 	// Parse the 'days' parameter from the query string or set a default value
@@ -39,13 +37,13 @@ func GetApplicationCount(w http.ResponseWriter, r *http.Request) {
 	prevStartDate := prevEndDate.AddDate(0, 0, -days)
 
 	// Retrieve job titles for the current and previous periods
-	currentJobs, err := services.GetJobApplicationsCount(userId, startDate, endDate)
+	currentJobs, err := services.GetJobApplicationsCount(user_id, startDate, endDate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	prevJobs, err := services.GetJobApplicationsCount(userId, prevStartDate, prevEndDate)
+	prevJobs, err := services.GetJobApplicationsCount(user_id, prevStartDate, prevEndDate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

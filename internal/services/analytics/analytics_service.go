@@ -6,6 +6,6 @@ import (
 )
 
 // GetJobApplicationsCount retrieves job titles for a user within the specified date range.
-func GetJobApplicationsCount(userId int, startDate, endDate time.Time) ([]string, error) {
+func GetJobApplicationsCount(userId string, startDate, endDate time.Time) ([]string, error) {
 	return repositories.GetJobApplicationsCount(userId, startDate, endDate)
 }

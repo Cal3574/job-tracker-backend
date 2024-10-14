@@ -8,7 +8,7 @@ import (
 
 //Func to create new goal
 
-func CreateGoal(userId int, goalName string, goalDescription string, goalAction string, goalDeadline string, goalTarget int8, goalType string) (int, error) {
+func CreateGoal(userId string, goalName string, goalDescription string, goalAction string, goalDeadline string, goalTarget int8, goalType string) (int, error) {
 	var id int
 
 	err := utils.DB.QueryRow(
@@ -25,7 +25,7 @@ func CreateGoal(userId int, goalName string, goalDescription string, goalAction 
 
 //Func to get all goals
 
-func GetAllGoals(userId int) ([]models.Goal, error) {
+func GetAllGoals(userId string) ([]models.Goal, error) {
 	var goals []models.Goal
 	rows, err := utils.DB.Query(`SELECT id, goal_name, goal_description, goal_action, goal_deadline, goal_progress, complete, goal_target, goal_type FROM goals WHERE user_id = $1`, userId)
 	if err != nil {
@@ -75,7 +75,7 @@ func GetGoalById(goalId int) (models.Goal, error) {
 }
 
 // Func get goals by goal type
-func GetGoalsByType(userId int, goalType string) ([]models.Goal, error) {
+func GetGoalsByType(userId string, goalType string) ([]models.Goal, error) {
 	var goals []models.Goal
 	rows, err := utils.DB.Query(`SELECT id, goal_name, goal_description, goal_action, goal_deadline, goal_progress, complete, goal_target, goal_type FROM goals WHERE user_id = $1 AND goal_type = $2`, userId, goalType)
 	if err != nil {

@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"job_tracker/internal/middleware"
 	models "job_tracker/internal/models/job_log"
 	goal_services "job_tracker/internal/services/goals"
 	services "job_tracker/internal/services/job_log"
@@ -17,11 +16,11 @@ import (
 // It creates a new job log record
 func CreateJobLog(w http.ResponseWriter, r *http.Request) {
 
-	userId, ok := r.Context().Value(middleware.UserIDKey).(int)
-	if !ok {
-		http.Error(w, "User ID not found", http.StatusUnauthorized)
-		return
+	user_id := r.URL.Query().Get("user_id")
+	if user_id == "" {
+		http.Error(w, "user_id not provided", http.StatusInternalServerError)
 	}
+
 	var jobLog models.JobLog
 
 	// Decode JSON request body into jobLog
@@ -60,7 +59,7 @@ func CreateJobLog(w http.ResponseWriter, r *http.Request) {
 	// If they do, check if the job application meets the goal criteria and progress goals if necessary.
 
 	if jobLog.CategoryId == "5" {
-		err = goal_services.HandleUserGoals(userId, "interviews_confirmed")
+		err = goal_services.HandleUserGoals(user_id, "interviews_confirmed")
 		if err != nil {
 			log.Printf("Error handling user goals: %v", err)
 		}

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	models "job_tracker/internal/models/users"
 	"job_tracker/pkg/utils"
-	"reflect"
 	"strconv"
 )
 
@@ -25,7 +24,7 @@ func CreateUser(user models.User) (models.User, bool, error) {
 
 	// Insert the new user into the database
 	var id int
-	err = utils.DB.QueryRow("INSERT INTO users (email, name, signup_complete) VALUES ($1, $2, $3) RETURNING id", user.Email, user.Name, false).Scan(&id)
+	err = utils.DB.QueryRow("INSERT INTO users (email, name, signup_complete, user_id) VALUES ($1, $2, $3, $4) RETURNING id", user.Email, user.Name, false, user.UserId).Scan(&id)
 	if err != nil {
 		return user, false, err
 	}
@@ -38,13 +37,6 @@ func CreateUser(user models.User) (models.User, bool, error) {
 
 // CompleteSignUp function to update user details
 func CompleteSignUp(user models.User) error {
-	fmt.Println(reflect.TypeOf(user.ID), "type of user ID")
-	fmt.Println(user.ID, "user ID")
-
-	userId, err := strconv.Atoi(user.ID)
-	if err != nil {
-		return fmt.Errorf("invalid user ID: %v", err)
-	}
 
 	industryId, err := strconv.Atoi(user.DesiredIndustryId)
 	if err != nil {
@@ -53,7 +45,7 @@ func CompleteSignUp(user models.User) error {
 
 	isComplete := true
 
-	query := `UPDATE users SET first_name=$1, last_name=$2, current_job_role=$3, experience_level=$4, desired_job_role=$5, desired_job_industry_id=$6, signup_complete=$7 WHERE id=$8`
+	query := `UPDATE users SET first_name=$1, last_name=$2, current_job_role=$3, experience_level=$4, desired_job_role=$5, desired_job_industry_id=$6, signup_complete=$7 WHERE user_id=$8`
 
 	result, err := utils.DB.Exec(query,
 		user.FirstName,
@@ -63,7 +55,7 @@ func CompleteSignUp(user models.User) error {
 		user.DesiredJobRole,
 		industryId,
 		isComplete,
-		userId,
+		user.UserId,
 	)
 
 	if err != nil {
@@ -100,9 +92,9 @@ func GetUserByEmail(email string) (models.User, error) {
 }
 
 // Function to check if a user has completed sign up process
-func CheckUserSignUpStatus(userId int) (bool, error) {
+func CheckUserSignUpStatus(userId string) (bool, error) {
 	var signupComplete bool
-	err := utils.DB.QueryRow("SELECT signup_complete FROM users WHERE id=$1", userId).Scan(&signupComplete)
+	err := utils.DB.QueryRow("SELECT signup_complete FROM users WHERE user_id=$1", userId).Scan(&signupComplete)
 	if err != nil {
 		return false, err
 	}
@@ -111,10 +103,10 @@ func CheckUserSignUpStatus(userId int) (bool, error) {
 }
 
 // Function to get the users personal information
-func GetUserInformation(userId int) (models.UserInfo, error) {
+func GetUserInformation(userId string) (models.UserInfo, error) {
 	var user_info models.UserInfo
 	fmt.Println(userId, "userId here")
-	err := utils.DB.QueryRow("SELECT users.id, users.first_name, users.last_name, users.email, users.current_job_role, users.desired_job_role, users.experience_level, industries.name FROM users JOIN industries ON users.desired_job_industry_id = industries.id WHERE users.id=$1", userId).Scan(
+	err := utils.DB.QueryRow("SELECT users.id, users.first_name, users.last_name, users.email, users.current_job_role, users.desired_job_role, users.experience_level, industries.name FROM users JOIN industries ON users.desired_job_industry_id = industries.id WHERE users.user_id=$1", userId).Scan(
 		&user_info.ID,
 		&user_info.FirstName,
 		&user_info.LastName,
@@ -144,7 +136,8 @@ func GetUserInformation(userId int) (models.UserInfo, error) {
 
 // Func to update user personal details
 func UpdateUserPersonalDetails(user_personal_info models.UserPersonalInfo) error {
-	result, err := utils.DB.Exec("UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4", user_personal_info.FirstName, user_personal_info.LastName, user_personal_info.Email, user_personal_info.ID)
+	fmt.Println(user_personal_info, "user personal info here")
+	result, err := utils.DB.Exec("UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE user_id = $4", user_personal_info.FirstName, user_personal_info.LastName, user_personal_info.Email, user_personal_info.ID)
 
 	if err != nil {
 		return err
@@ -163,7 +156,8 @@ func UpdateUserPersonalDetails(user_personal_info models.UserPersonalInfo) error
 
 // Func to update user career details
 func UpdateUserCareerDetails(user_personal_info models.UserCareerInfo) error {
-	result, err := utils.DB.Exec("UPDATE users SET current_job_role = $1, experience_level = $2, desired_job_role = $3, desired_job_industry_id = $4 WHERE id = $5", user_personal_info.CurrentJobRole, user_personal_info.ExperienceLevel, user_personal_info.DesiredJobRole, user_personal_info.DesiredIndustryId, user_personal_info.ID)
+	fmt.Println(user_personal_info, "user career info here")
+	result, err := utils.DB.Exec("UPDATE users SET current_job_role = $1, experience_level = $2, desired_job_role = $3, desired_job_industry_id = $4 WHERE user_id = $5", user_personal_info.CurrentJobRole, user_personal_info.ExperienceLevel, user_personal_info.DesiredJobRole, user_personal_info.DesiredIndustryId, user_personal_info.ID)
 
 	if err != nil {
 		return err

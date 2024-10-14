@@ -8,7 +8,7 @@ import (
 
 // Function to find all jobs
 // Returns a slice of Job structs
-func FindAllJobs(userId int) ([]models.Job, error) {
+func FindAllJobs(userId string) ([]models.Job, error) {
 	rows, err := utils.DB.Query(`
         SELECT 
             j.id, 
@@ -72,7 +72,7 @@ func GetJobById(id int) (models.Job, error) {
 // mutex.Lock() locks the mutex so that only one goroutine can access the jobs slice at a time
 // The defer keyword is used to defer the execution of the mutex.Unlock() statement until the function returns
 // The mutex is unlocked
-func CreateJob(job models.Job, userId int) (models.Job, error) {
+func CreateJob(job models.Job, userId string) (models.Job, error) {
 	var id int
 	err := utils.DB.QueryRow(
 		`INSERT INTO job(job_title, company, location, salary, url, user_id, priorities ) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id`,

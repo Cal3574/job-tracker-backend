@@ -1,17 +1,21 @@
 package users
 
 import (
+	"fmt"
 	models "job_tracker/internal/models/users"
 	repositories "job_tracker/internal/repositories/users"
 )
 
 // CreateNewUser creates a new user record or returns an existing user.
-func CreateNewUser(email string, name string) (models.User, bool, error) {
+func CreateNewUser(email string, name string, user_id string) (models.User, bool, error) {
 	// Create the user model
 	user := models.User{
-		Email: email,
-		Name:  name,
+		Email:  email,
+		Name:   name,
+		UserId: user_id,
 	}
+
+	fmt.Print(user, "user is here now!!")
 
 	// Call the repository layer to create the user or get the existing one
 	createdUser, isNewUser, err := repositories.CreateUser(user)
@@ -34,7 +38,7 @@ func CompleteSignUp(user models.User) error {
 }
 
 // CheckUserSignUpStatus checks if the user has completed the sign up process.
-func CheckUserSignUpStatus(userId int) (bool, error) {
+func CheckUserSignUpStatus(userId string) (bool, error) {
 	signUpStatus, err := repositories.CheckUserSignUpStatus(userId)
 	if err != nil {
 		return false, err
@@ -43,7 +47,7 @@ func CheckUserSignUpStatus(userId int) (bool, error) {
 }
 
 // GetUserInformation to grab all the user information for profile page
-func GetUserInformation(userId int) (models.UserInfo, error) {
+func GetUserInformation(userId string) (models.UserInfo, error) {
 	userInfo, err := repositories.GetUserInformation(userId)
 	if err != nil {
 		return userInfo, err

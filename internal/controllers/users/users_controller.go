@@ -8,7 +8,6 @@ import (
 	services "job_tracker/internal/services/users"
 	validation "job_tracker/internal/validation/users"
 	"net/http"
-	"strconv"
 )
 
 // CreateUser handles the user creation endpoint
@@ -35,8 +34,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the user
-	createdUser, isNewUser, err := services.CreateNewUser(user.Email, user.Name)
+	createdUser, isNewUser, err := services.CreateNewUser(user.Email, user.Name, user.UserId)
 	if err != nil {
+		fmt.Print(err, "error here")
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
@@ -65,13 +65,16 @@ func CompleteSignUp(w http.ResponseWriter, r *http.Request) {
 
 	// Decode the incoming user JSON
 	err := json.NewDecoder(r.Body).Decode(&user)
+
+	fmt.Print("user", user)
 	if err != nil {
 		http.Error(w, "Invalid input data", http.StatusBadRequest)
 		return
 	}
 
+	fmt.Print(user.UserId)
 	//check the value of the userId
-	if user.ID == "" {
+	if user.UserId == "" {
 		http.Error(w, "User ID is required", http.StatusBadRequest)
 		return
 	}
@@ -97,16 +100,8 @@ func CheckUserSignUpStatus(w http.ResponseWriter, r *http.Request) {
 	// Get the user ID from the request context
 	userId := r.URL.Query().Get("userId")
 
-	// Turn the user ID into an integer
-	userIdInt, err := strconv.Atoi(userId)
-
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
-
 	// Call the service to check the sign up status
-	signUpStatus, err := services.CheckUserSignUpStatus(userIdInt)
+	signUpStatus, err := services.CheckUserSignUpStatus(userId)
 	if err != nil {
 		http.Error(w, "Failed to check sign up status", http.StatusInternalServerError)
 		return
@@ -127,17 +122,8 @@ func GetUserInformation(w http.ResponseWriter, r *http.Request) {
 	// Get the user ID from the request query
 	userId := r.URL.Query().Get("userId")
 
-	// Validate and convert the user ID
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil || userIdInt <= 0 {
-		// Invalid or missing user ID, respond with 400 Bad Request
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(error_models.ErrorResponse{Message: "Invalid or missing user ID"})
-		return
-	}
-
 	// Call the service to get user information
-	userInfo, err := services.GetUserInformation(userIdInt)
+	userInfo, err := services.GetUserInformation(userId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error_models.ErrorResponse{Message: "Failed to retrieve user information"})
