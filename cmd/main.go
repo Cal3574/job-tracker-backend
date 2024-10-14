@@ -1,5 +1,3 @@
-// cmd/main.go
-
 package main
 
 import (
@@ -39,9 +37,15 @@ func main() {
 	// Log the allowed origins for debugging purposes
 	log.Printf("Allowed Origins: %v\n", allowedOrigins)
 
+	// Dynamic port assignment
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Fallback for local development
+	}
+
 	// Start the server with CORS middleware enabled
-	log.Println("Starting server on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
+	log.Printf("Starting server on port %s...\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(
 		handlers.AllowedOrigins(allowedOrigins),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
