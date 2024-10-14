@@ -1,0 +1,9 @@
+{
+    "build": {
+        "command": "go build -o main cmd/main.go",
+        "output": "main"
+    },
+    "start": {
+        "command": "./main"
+    }
+}
