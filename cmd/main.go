@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gorilla/handlers"
 )
@@ -38,14 +39,22 @@ func main() {
 	log.Printf("Allowed Origins: %v\n", allowedOrigins)
 
 	// Dynamic port assignment
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // Fallback for local development
+	portStr := os.Getenv("PORT")
+	var port int
+	var err error
+
+	if portStr != "" {
+		port, err = strconv.Atoi(portStr) // Convert string to int
+		if err != nil {
+			log.Fatalf("Invalid PORT value: %s\n", portStr)
+		}
+	} else {
+		port = 3000 // Default port
 	}
 
-	// Start the server with CORS middleware enabled, listening on 0.0.0.0
-	log.Printf("Starting server on port %s...\n", port)
-	log.Fatal(http.ListenAndServe("0.0.0.0:"+port, handlers.CORS(
+	// Start the server with CORS middleware enabled
+	log.Printf("Starting server on port %d...\n", port)
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), handlers.CORS(
 		handlers.AllowedOrigins(allowedOrigins),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
