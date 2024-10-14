@@ -22,16 +22,22 @@ func main() {
 	// Set up routes
 	router := routes.SetupRoutes()
 
-	allowedOrigin := os.Getenv("FRONTEND_URL")
-	if allowedOrigin == "" {
-		allowedOrigin = "http://localhost:3000" // Fallback if env var is not set
+	// Fetch allowed origins from environment variable
+	// Add support for multiple origins (local and production)
+	allowedOrigins := []string{
+		"http://localhost:3000",                                  // Local Development
+		"https://job-tracker-frontend-production.up.railway.app", // Production Frontend
 	}
 
-	// Start the server
+	// Optionally, you can allow additional origins based on FRONTEND_URL env var
+	if frontendURL := os.Getenv("FRONTEND_URL"); frontendURL != "" {
+		allowedOrigins = append(allowedOrigins, frontendURL)
+	}
+
+	// Start the server with CORS middleware enabled
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
-		handlers.AllowedOrigins([]string{allowedOrigin}), // Replace with your frontend URL
+		handlers.AllowedOrigins(allowedOrigins),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
 	)(router)))
-
 }
